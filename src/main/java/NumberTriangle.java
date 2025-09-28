@@ -1,4 +1,6 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is the provided NumberTriangle class to be used in this coding task.
@@ -108,25 +110,47 @@ public class NumberTriangle {
         // are more convenient to work with when reading the file contents.
         InputStream inputStream = NumberTriangle.class.getClassLoader().getResourceAsStream(fname);
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+        String line = br.readLine();
 
 
-        // TODO define any variables that you want to use to store things
+        String[] numsLine = line.split("\\s");
 
         // will need to return the top of the NumberTriangle,
         // so might want a variable for that.
-        NumberTriangle top = null;
+        NumberTriangle top = new NumberTriangle(Integer.parseInt(numsLine[0]));
 
-        String line = br.readLine();
+        ArrayList<NumberTriangle> queue = new ArrayList<>();
+        queue.add(top);
+        line = br.readLine();
+
+        ArrayList<NumberTriangle> queueNext = new ArrayList<>();
+
         while (line != null) {
+            numsLine = line.split("\\s");
 
-            // remove when done; this line is included so running starter code prints the contents of the file
-            System.out.println(line);
+            for (int i = 0; i < numsLine.length; i++) {
+                NumberTriangle numToAdd = new NumberTriangle(Integer.parseInt(numsLine[i]));
 
-            // TODO process the line
+                if (i - 1 >= 0) {
+                    NumberTriangle leftParent = queue.get(i - 1);
+                    leftParent.setRight(numToAdd);
+                }
 
-            //read the next line
+                if (i < queue.size()) {
+                    NumberTriangle rightParent = queue.get(i);
+                    rightParent.setLeft(numToAdd);
+                }
+
+                queueNext.add(numToAdd);
+            }
+
+            queue = queueNext;
+            queueNext = new ArrayList<>();
+
+            // read the next line
             line = br.readLine();
         }
+
         br.close();
         return top;
     }
